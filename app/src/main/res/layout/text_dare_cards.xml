@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="8dp">
+
+    <RelativeLayout
+        android:background="@color/cardColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/textdare_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:background="@color/colorAccent"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:id="@+id/textdare_profile_pic"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="left"
+                android:adjustViewBounds="true" />
+
+            <ImageButton
+                android:id="@+id/hotDare"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:onClick="isHotDare"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_whatshot"
+                android:layout_marginLeft="250dp" />
+
+            <ImageButton
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_comment"
+                android:onClick="addComment"
+                android:background="@null"
+                android:id="@+id/comment"
+                android:layout_marginLeft="5dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <TextView
+            android:id="@+id/textdare_posterid"
+            android:text="Brandon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textdare_topbar"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="18sp" />
+
+        <View
+            android:id="@+id/textdare_divider"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_below="@+id/textdare_posterid"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/textdare_post"
+            android:text="Hi how is everybody"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textdare_divider"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

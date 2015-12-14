@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Dares</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_post_dare">PostDare</string>
+    <string name="title_activity_comment">CommentActivity</string>
+    <string name="section_format">Hello World!</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
