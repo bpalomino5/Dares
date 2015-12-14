@@ -3,6 +3,7 @@ package com.palomino.mrbp.dares;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import android.transition.Fade;
 import android.transition.PathMotion;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -94,6 +96,7 @@ public class MyMaterialUtils {
     private JSONArray posts;
     private JSONArray users;
     private static final String POSTS_URL = "http://192.168.2.23:8888/dares/posts.php";
+    private static final String ADD_POST_URL = "http://192.168.2.23:8888/dares/addpost.php";
     private static final String USERS_URL = "http://192.168.2.23:8888/dares/users.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_DESCRIPTION = "description";
@@ -101,6 +104,8 @@ public class MyMaterialUtils {
     private static final String TAG_USER_ID = "user_id";
     private static final String TAG_USERS = "users";
     private static final String TAG_MESSAGE = "message";
+    //For Profile
+    private static String mUsername;
 
 
     //constructor with one argument taking the parameter of the MainActivity object
@@ -121,7 +126,7 @@ public class MyMaterialUtils {
 
     public void setupFragmentMethods(final View view, Fragment fragment){
         new LoadPosts().execute();
-        new NameTask().execute();
+//        new NameTask().execute();
         setupReferences(fragment.getActivity());
         setupTimelineReferences(view);
         setupTimelineLayout(fragment);
@@ -334,7 +339,7 @@ public class MyMaterialUtils {
 
         for(int i=0; i< postsList.size(); i++){
             NameValuePair postInfo = postsList.get(i);
-            items.add(new TextDare(profileDrawable, mUsernames.get(i), postInfo.getValue()));
+            items.add(new TextDare(profileDrawable, postInfo.getName(), postInfo.getValue()));
         }
         return items;
     }
@@ -347,11 +352,11 @@ public class MyMaterialUtils {
         @Override
         protected Void doInBackground(Void... params) {
             JSONParser jParser = new JSONParser();
-            JSONObject json = jParser.getJSONFromUrl(USERS_URL);
+            JSONObject json = jParser.getJSONFromUrl(POSTS_URL);
 
 
             try {
-                users = json.getJSONArray(TAG_USERS);
+                users = json.getJSONArray(TAG_POSTS);
 
                 for(int i=0 ;i < users.length(); i++){
                     JSONObject c = users.getJSONObject(i);
@@ -371,8 +376,6 @@ public class MyMaterialUtils {
         protected void onPostExecute(Void s) {
             super.onPostExecute(s);
             mUsernames = usernames;
-            adapter.clear();
-            adapter.addAll(getData());
         }
     }
 
@@ -436,14 +439,55 @@ public class MyMaterialUtils {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             //updateList
+            adapter.clear();
+            adapter.addAll(getData());
         }
     }
 
-
-    public static void addTextDare(String post){
+    public  void addTextDare(final String post, final Context context){
         int profileDrawable = R.mipmap.ic_launcher;
-        String profileName = "Foo";
-        items.add(new TextDare(profileDrawable, profileName, post));
+
+        //add to database with asynctask
+
+        class AddDareTask extends AsyncTask<Void, Void, String> {
+
+            @Override
+            protected String doInBackground(Void... params) {
+                int success;
+                try {
+                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                    parameters.add(new BasicNameValuePair("username", mUsername));
+                    parameters.add(new BasicNameValuePair("post", post));
+
+                    JSONParser jParser = new JSONParser();
+                    JSONObject json = jParser.makeHttpRequest(ADD_POST_URL,"POST",parameters);
+
+
+                    success = json.getInt(TAG_SUCCESS);
+                    if (success == 1) {
+                        return json.getString(TAG_MESSAGE);
+                    }else{
+                        return json.getString(TAG_MESSAGE);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Toast.makeText(context,s,Toast.LENGTH_LONG).show();
+                new LoadPosts().execute();
+
+            }
+        }
+
+        AddDareTask addDareTask = new AddDareTask();
+        addDareTask.execute();
     }
 
     //method to setup layout for timeline fragment
@@ -486,4 +530,25 @@ public class MyMaterialUtils {
             }
         });
     }
+
+
+
+    public void addRecyclerViewScrollListener2(RecyclerView recyclerView) {
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int check = params.gravity;
+                if (check == (Gravity.BOTTOM | Gravity.CENTER)) {
+                    animateRevealHide(bottomBar);
+                    ArcMotionHide(fab, params);
+                }
+            }
+
+        });
+    }
+
+    public void setUsername(String username){
+        this.mUsername = username;
+    }
+
 }
