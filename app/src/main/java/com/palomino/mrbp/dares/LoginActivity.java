@@ -37,8 +37,13 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://192.168.2.23:8888/dares/login.php";
-    private static final String REGISTER_URL = "http://192.168.2.23:8888/dares/register.php";
+//    private static final String LOGIN_URL = "http://192.168.2.23:8888/dares/login.php";
+//    private static final String REGISTER_URL = "http://192.168.2.23:8888/dares/register.php";
+
+    //ians network
+    private static final String LOGIN_URL = "http://172.20.10.2:8888/dares/login.php";
+    private static final String REGISTER_URL = "http://172.20.10.2:8888/dares/register.php";
+
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 

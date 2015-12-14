@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -25,7 +28,6 @@ import android.transition.Fade;
 import android.transition.PathMotion;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -40,6 +42,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,9 +101,17 @@ public class MyMaterialUtils {
     private static ArrayList<String> mUsernames;
     private JSONArray posts;
     private JSONArray users;
-    private static final String POSTS_URL = "http://192.168.2.23:8888/dares/posts.php";
-    private static final String ADD_POST_URL = "http://192.168.2.23:8888/dares/addpost.php";
-    private static final String USERS_URL = "http://192.168.2.23:8888/dares/users.php";
+//    private static final String POSTS_URL = "http://192.168.2.23:8888/dares/posts.php";
+//    private static final String ADD_POST_URL = "http://192.168.2.23:8888/dares/addpost.php";
+//    private static final String USERS_URL = "http://192.168.2.23:8888/dares/users.php";
+//    private static final String GET_IMAGES_URL = "http://192.168.2.23:8888/dares/getImages.php";
+
+    //ians network
+    private static final String POSTS_URL = "http://172.20.10.2:8888/dares/posts.php";
+    private static final String ADD_POST_URL = "http://172.20.10.2:8888/dares/addpost.php";
+    private static final String USERS_URL = "http://172.20.10.2:8888/dares/users.php";
+    private static final String GET_IMAGES_URL = "http://172.20.10.2:8888/dares/getImages.php";
+
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_DESCRIPTION = "description";
     private static final String TAG_POSTS = "posts";
@@ -106,6 +120,8 @@ public class MyMaterialUtils {
     private static final String TAG_MESSAGE = "message";
     //For Profile
     private static String mUsername;
+    private static ArrayList<String> urls;
+    private static ArrayList<Bitmap> bitmaps;
 
 
     //constructor with one argument taking the parameter of the MainActivity object
@@ -529,8 +545,7 @@ public class MyMaterialUtils {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.clear();
-                adapter.addAll(getData());
+                new LoadPosts().execute();
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -558,6 +573,67 @@ public class MyMaterialUtils {
 
     public String getUsername(){
         return  mUsername;
+    }
+
+    public class GetImageTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            urls = new ArrayList<>();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            int success;
+            try {
+
+                JSONParser jParser = new JSONParser();
+                JSONObject json = jParser.getJSONFromUrl(GET_IMAGES_URL);
+
+                success = json.getInt(TAG_SUCCESS);
+                JSONArray jsonArray = json.getJSONArray("images");
+                if (success == 1) {
+                    String url ="";
+                    for(int i=0; i < jsonArray.length(); i++){
+                        JSONObject c = jsonArray.getJSONObject(i);
+                        url = c.getString("image");
+                        urls.add(url);
+                    }
+                }else{
+                    return json.getString(TAG_MESSAGE);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+    }
+
+
+    class ImageTask extends AsyncTask<Void,Void,Void>{
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            URL url = null;
+            try {
+                for(String urlss : urls){
+                    url = new URL(urlss);
+                    bitmaps.add(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
 }

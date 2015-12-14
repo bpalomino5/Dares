@@ -31,7 +31,7 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         String username = intent.getExtras().getString("username");

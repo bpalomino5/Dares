@@ -24,7 +24,7 @@ public class PostDare extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ImageButton imageButton = (ImageButton) findViewById(R.id.doneButton);
         imageButton.setColorFilter(getResources().getColor(R.color.colorAccent));
