@@ -1,6 +1,8 @@
 package com.palomino.mrbp.dares;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -26,7 +28,6 @@ import java.util.List;
  */
 public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater inflater;
-    //    private List<Information> data = Collections.emptyList();
 
     private List<Dare> data = Collections.emptyList();
     private final int VIDEO = 0, TEXT = 1;
@@ -65,9 +66,6 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
         }
         return viewHolder;
-
-//        CardView view = (CardView) inflater.inflate(R.layout.custom_cards, parent, false);
-//        return new MyViewHolder(view);
     }
 
     @Override
@@ -86,41 +84,6 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 configureSimpleDare(simpleViewHolder, position);
                 break;
         }
-
-
-//        Information current = data.get(position);
-//        videoView.setVideoPath("http://techslides.com/demos/sample-videos/small.mp4");
-//        holder.videoView.setVideoURI(Uri.parse("android.resource://" +  holder.videoView.getRootView().getContext().getPackageName() + "/" + R.raw.small));
-//        MediaController mediaController = new MediaController(holder.videoView.getContext());
-//        mediaController.setAnchorView(holder.videoView);
-//        holder.videoView.setMediaController(mediaController);
-//
-//        //listener for completion to set button visibility back on
-//        holder.videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                holder.playVideoButton.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-//        //listener for button click to start video and set button invisible during its duration
-//        holder.playVideoButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                view.setVisibility(View.INVISIBLE);
-//                holder.videoView.start();
-//            }
-//        });
-//
-//        //get profile image and set it
-//        Drawable drawable = holder.profileImage.getRootView().getResources().getDrawable(current.profileDrawableId);
-//        holder.profileImage.setImageDrawable(drawable);
-//
-//        //get profile name, set it
-//        holder.profileName.setText(current.profileName);
-//
-//        //get video description, set it
-//        holder.description.setText(current.description);
     }
 
     private void configureSimpleDare(SimpleViewHolder simpleViewHolder, int position) {
@@ -244,7 +207,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @UiThread
     public void clear() {
         data.clear();
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     // Add a list of items
@@ -252,6 +215,11 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void addAll(List<Dare> dares) {
         data.addAll(dares);
         notifyDataSetChanged();
+    }
+
+    public void add(int profileDrawableId, String post, String username){
+        data.add(new TextDare(profileDrawableId, username, post));
+        notifyItemInserted(data.size()-1);
     }
 
 }

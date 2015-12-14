@@ -4,21 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.palomino.mrbp.myapplication.CommentActivity"
-    tools:showIn="@layout/activity_comment">
+    tools:context=".CommentActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp" />
 
 
-    <EditText
-        android:layout_alignParentTop="true"
-        android:focusable="true"
-        android:background="@null"
-        android:hint="Write a comment..."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_above="@+id/layout_comment_and_send"
+        android:background="@android:color/darker_gray" />
 
+    <LinearLayout
+        android:id="@+id/layout_comment_and_send"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/comment_text"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:background="@null"
+            android:hint="Write a comment..." />
+
+        <ImageButton
+            android:id="@+id/comment_send_button"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/complementaryColor"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_send" />
+    </LinearLayout>
 </RelativeLayout>

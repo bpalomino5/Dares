@@ -65,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
         setupTabIcons();
 
+        Intent intent = getIntent();
+        String mUsername = null;
+        if (intent != null) {
+            mUsername = intent.getExtras().getString("username");
+            utils.setUsername(mUsername);
+        }
     }
+
 
 
     @Override
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            finish();
             return true;
         }
 
@@ -91,101 +99,85 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+/**
+ * A placeholder fragment containing a simple view.
+ */
+public static class PlaceholderFragment extends Fragment {
     /**
-     * A placeholder fragment containing a simple view.
+     * The fragment argument representing the section number for this
+     * fragment.
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format));
-            return rootView;
-        }
+    public PlaceholderFragment() {
     }
 
     /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
+     * Returns a new instance of this fragment for the given section
+     * number.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-//            if(position == 0){
-//                return SimpleFragment.newInstance(null,null);
-//            }
-//            else {
-//                return PlaceholderFragment.newInstance(position + 1);
-//            }
-
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-//            switch (position) {
-//                case 0:
-//                    return mFragmentTitleList.get(position);
-//                case 1:
-//                    return "SECTION 2";
-//                case 2:
-//                    return "SECTION 3";
-//            }
-            return null;
-        }
+    public static PlaceholderFragment newInstance(int sectionNumber) {
+        PlaceholderFragment fragment = new PlaceholderFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    private void setupTabIcons(){
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+        textView.setText(getString(R.string.section_format));
+        return rootView;
+    }
+}
+
+/**
+ * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+ * one of the sections/tabs/pages.
+ */
+public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private final List<Fragment> mFragmentList = new ArrayList<>();
+//        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+
+    public SectionsPagerAdapter(FragmentManager fm) {
+        super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        return mFragmentList.get(position);
+
+    }
+
+    public void addFragment(Fragment fragment) {
+        mFragmentList.add(fragment);
+//            mFragmentTitleList.add(title);
+    }
+
+    @Override
+    public int getCount() {
+        // Show 3 total pages.
+        return 2;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return null;
+    }
+
+}
+
+    private void setupTabIcons() {
         try {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_timeline);
-            tabLayout.getTabAt(1).setIcon(R.drawable.ic_poll);
-            tabLayout.getTabAt(2).setIcon(R.drawable.ic_person);
+//            tabLayout.getTabAt(1).setIcon(R.drawable.ic_poll);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_person);
 
-        } catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             exception.printStackTrace();
         }
     }
@@ -205,10 +197,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if(requestCode == REQUEST_CODE){
-            if(resultCode == RESULT_OK){
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 String post = data.getExtras().getString("Post");
-                utils.addTextDare(post);
+                utils.addTextDare(post, this);
             }
         }
     }
@@ -239,14 +231,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void addComment(View view) {
         Intent intent = new Intent(this, CommentActivity.class);
+        intent.putExtra("username", utils.getUsername());
         startActivity(intent);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mSectionsPagerAdapter.addFragment(new SimpleFragment(utils), "ONE");
-        mSectionsPagerAdapter.addFragment(new PlaceholderFragment(), "TWO");
-        mSectionsPagerAdapter.addFragment(new PlaceholderFragment(), "THREE");
+        mSectionsPagerAdapter.addFragment(new SimpleFragment(utils));
+        mSectionsPagerAdapter.addFragment(new DareListFragment(utils));
         viewPager.setAdapter(mSectionsPagerAdapter);
     }
 

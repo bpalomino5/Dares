@@ -55,7 +55,7 @@ public class SimpleFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        materialUtils.loadAllPosts();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -67,15 +67,7 @@ public class SimpleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simple, container, false);
-        if(savedInstanceState == null){
-            materialUtils.setupFragmentMethods(view, this);
-
-        } else{
-            materialUtils= new MyMaterialUtils(view, this);
-
-        }
-//        materialUtils= new MyMaterialUtils(view, this);
-//        materialUtils.setupFragmentMethods(view, this);
+        materialUtils.setupFragmentMethods(view, this);
         return view;
     }
 

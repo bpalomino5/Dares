@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Dares</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Logout</string>
     <string name="title_activity_post_dare">PostDare</string>
     <string name="title_activity_comment">CommentActivity</string>
     <string name="section_format">Hello World!</string>
@@ -18,4 +18,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+
+
+    <string name="number_of_dares">Dares</string>
+    <string name="number_of_friends">Friends</string>
+    <string name="add_a_friend">Add Friend</string>
+    <string name="comments">Comments</string>
+    <string name="title_activity_single_dare_viewer">SingleDareViewerActivity</string>
 </resources>

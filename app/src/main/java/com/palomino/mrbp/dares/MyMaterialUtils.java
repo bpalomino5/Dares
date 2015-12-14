@@ -439,8 +439,8 @@ public class MyMaterialUtils {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             //updateList
-//            adapter.clear();
-//            adapter.addAll(getData());
+            adapter.clear();
+            adapter.addAll(getData());
         }
     }
 

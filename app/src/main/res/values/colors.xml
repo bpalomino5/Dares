@@ -9,4 +9,9 @@
     <color name="test">#B0B5B3</color>
 
     <color name="hotDareAmber">#FF9D00</color>
+
+    <color name="colorSecondary">#A4CF85</color>
+    <color name="darkGray">#333333</color>
+    <color name="lightGray">#b5b5b5</color>
+    <color name="complementaryColor">#652f8b</color>
 </resources>

@@ -283,7 +283,7 @@ public class LoginActivity extends AppCompatActivity {
                 // json success tag
                 success = jsonObject.getInt(TAG_SUCCESS);
                 if(success == 1){
-                    Log.d("Login Successful!", jsonObject.toString());
+//                    Log.d("Login Successful!", jsonObject.toString());
 
                     // save user data
                     SharedPreferences sp = PreferenceManager
@@ -315,6 +315,7 @@ public class LoginActivity extends AppCompatActivity {
             if(result != null){
                 Toast.makeText(LoginActivity.this, result, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("username",mUsername);
                 startActivity(intent);
             }
         }
