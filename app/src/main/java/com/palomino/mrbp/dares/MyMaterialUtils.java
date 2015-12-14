@@ -31,6 +31,12 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +89,18 @@ public class MyMaterialUtils {
     private RecyclerView recyclerView;
     private MyAdapter adapter;
     private static ArrayList<Dare> items;
+    private static ArrayList<NameValuePair> postsList;
+    private static ArrayList<String> mUsernames;
+    private JSONArray posts;
+    private JSONArray users;
+    private static final String POSTS_URL = "http://192.168.2.23:8888/dares/posts.php";
+    private static final String USERS_URL = "http://192.168.2.23:8888/dares/users.php";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_DESCRIPTION = "description";
+    private static final String TAG_POSTS = "posts";
+    private static final String TAG_USER_ID = "user_id";
+    private static final String TAG_USERS = "users";
+    private static final String TAG_MESSAGE = "message";
 
 
     //constructor with one argument taking the parameter of the MainActivity object
@@ -102,6 +120,8 @@ public class MyMaterialUtils {
     }
 
     public void setupFragmentMethods(final View view, Fragment fragment){
+        new LoadPosts().execute();
+        new NameTask().execute();
         setupReferences(fragment.getActivity());
         setupTimelineReferences(view);
         setupTimelineLayout(fragment);
@@ -306,27 +326,56 @@ public class MyMaterialUtils {
     }
 
     //helper method to help setup RecyclerView adapter, uses Information (class)
-    public static List<Information> getData() {
-        List<Information> data = new ArrayList<>();
-        int profileDrawables = R.mipmap.ic_launcher;
-        String descriptions = "The greatest dare ever seen on DareTime!";
-        String[] profileNames = {"Brandon", "Tony", "Ian", "Chris"};
+    private  ArrayList<Dare> getData() {
+        //get profile picture from user_id
+        int profileDrawable = R.mipmap.ic_launcher;    //sample profile pic
+        items = new ArrayList<>();
 
-        for (int i = 0; i < profileNames.length; i++) {
-            Information current = new Information();
-            current.profileDrawableId = profileDrawables;
-            current.description = descriptions;
-            current.profileName = profileNames[i];
 
-            data.add(current);
+        for(int i=0; i< postsList.size(); i++){
+            NameValuePair postInfo = postsList.get(i);
+            items.add(new TextDare(profileDrawable, mUsernames.get(i), postInfo.getValue()));
         }
-
-        return data;
-    }
-
-    public static ArrayList<Dare> getDares(){
         return items;
     }
+
+
+    class NameTask extends AsyncTask<Void, Void, Void> {
+        ArrayList<String> usernames = new ArrayList<>();
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            JSONParser jParser = new JSONParser();
+            JSONObject json = jParser.getJSONFromUrl(USERS_URL);
+
+
+            try {
+                users = json.getJSONArray(TAG_USERS);
+
+                for(int i=0 ;i < users.length(); i++){
+                    JSONObject c = users.getJSONObject(i);
+
+                    usernames.add(c.getString("username"));
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void s) {
+            super.onPostExecute(s);
+            mUsernames = usernames;
+            adapter.clear();
+            adapter.addAll(getData());
+        }
+    }
+
 
     //helper method to setup Dare information for RecyclerView (Timeline)
     public static ArrayList<Dare> getStartDares() {
@@ -348,6 +397,49 @@ public class MyMaterialUtils {
         return items;
     }
 
+
+    public void updateJSONdata() {
+        postsList = new ArrayList<>();
+
+        JSONParser jParser = new JSONParser();
+        JSONObject json = jParser.getJSONFromUrl(POSTS_URL);
+
+        try {
+
+            posts = json.getJSONArray(TAG_POSTS);
+
+            // looping through all posts according to the json object returned
+            for (int i = 0; i < posts.length(); i++) {
+                JSONObject c = posts.getJSONObject(i);
+
+                //gets the content of each tag
+                String user_id = c.getString(TAG_USER_ID);
+                String description = c.getString(TAG_DESCRIPTION);
+
+                postsList.add(new BasicNameValuePair(user_id,description));//
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public class LoadPosts extends AsyncTask<Void,Void,Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            updateJSONdata();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            //updateList
+        }
+    }
+
+
     public static void addTextDare(String post){
         int profileDrawable = R.mipmap.ic_launcher;
         String profileName = "Foo";
@@ -356,7 +448,7 @@ public class MyMaterialUtils {
 
     //method to setup layout for timeline fragment
     public void setupTimelineLayout(Fragment fragment) {
-        adapter = new MyAdapter(fragment.getContext(), getStartDares());
+        adapter = new MyAdapter(fragment.getContext(), getData());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(fragment.getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -389,7 +481,7 @@ public class MyMaterialUtils {
             @Override
             public void onRefresh() {
                 adapter.clear();
-                adapter.addAll(getDares());
+                adapter.addAll(getData());
                 swipeContainer.setRefreshing(false);
             }
         });
