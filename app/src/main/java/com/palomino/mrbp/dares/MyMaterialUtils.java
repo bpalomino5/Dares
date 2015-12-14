@@ -125,7 +125,7 @@ public class MyMaterialUtils {
     }
 
     public void setupFragmentMethods(final View view, Fragment fragment){
-        new LoadPosts().execute();
+//        new LoadPosts().execute();
 //        new NameTask().execute();
         setupReferences(fragment.getActivity());
         setupTimelineReferences(view);
@@ -439,13 +439,17 @@ public class MyMaterialUtils {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             //updateList
-            adapter.clear();
-            adapter.addAll(getData());
+//            adapter.clear();
+//            adapter.addAll(getData());
         }
     }
 
+    public void loadAllPosts(){
+        new LoadPosts().execute();
+    }
+
     public  void addTextDare(final String post, final Context context){
-        int profileDrawable = R.mipmap.ic_launcher;
+        final int profileDrawable = R.mipmap.ic_launcher;
 
         //add to database with asynctask
 
@@ -481,6 +485,7 @@ public class MyMaterialUtils {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 Toast.makeText(context,s,Toast.LENGTH_LONG).show();
+                adapter.add(profileDrawable, post, mUsername);
                 new LoadPosts().execute();
 
             }
@@ -549,6 +554,10 @@ public class MyMaterialUtils {
 
     public void setUsername(String username){
         this.mUsername = username;
+    }
+
+    public String getUsername(){
+        return  mUsername;
     }
 
 }
